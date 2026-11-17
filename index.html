@@ -1,0 +1,609 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ishan Mart | Online Grocery</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<style>
+:root{
+ --bg:#102B2B;--panel:#173735;--panel2:#204440;
+ --mint:#43D6BD;--light:#A4F4E5;--text:#F1FFFC;
+ --muted:#A6C5BF;--border:#315B55;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0;border-radius:10px;padding:12px 16px;font-weight:bold}
+button:disabled{opacity:.6;cursor:not-allowed}
+.topbar{background:#0B2222;padding:17px 6%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;border-bottom:1px solid var(--border)}
+.logo{font-size:25px;font-weight:900;color:var(--mint);letter-spacing:1px}
+.primary,.cart-btn{background:var(--mint);color:#082522}
+.primary:hover,.cart-btn:hover{background:var(--light)}
+.hero{padding:65px 6%;background:linear-gradient(120deg,#1C4944,#102B2B);text-align:center}
+.hero h1{font-size:clamp(30px,5vw,48px);margin:0 0 12px}
+.hero h1 span{color:var(--mint)}
+.hero p{color:var(--muted)}
+main{padding:30px 6%;max-width:1250px;margin:auto}
+.toolbar{display:flex;gap:12px;margin-bottom:25px}
+.toolbar input{flex:1;min-width:200px}
+input,select{background:#102B2B;color:white;border:1px solid var(--border);padding:13px;border-radius:9px;width:100%}
+input::placeholder{color:#8BAEA7}
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.card{background:var(--panel);padding:16px;border:1px solid var(--border);border-radius:15px;transition:.2s}
+.card:hover{border-color:var(--mint);transform:translateY(-2px)}
+.product-image{height:150px;width:100%;object-fit:cover;background:var(--panel2);border-radius:10px}
+.card h3{margin:13px 0 7px}
+.price{color:var(--mint);font-size:21px;font-weight:bold}
+.card .add-button{width:100%;margin-top:12px}
+.card-qty{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:12px}
+.card-qty button{background:var(--mint);color:#082522;padding:9px 16px}
+.card-qty span{font-weight:bold;min-width:15px;text-align:center}
+.section-title{margin:35px 0 18px}
+#message{color:var(--light);margin:15px 0}
+.empty{color:var(--muted);padding:30px;text-align:center;background:var(--panel);border-radius:12px}
+.cart-panel,.checkout-panel,.tracking-panel{background:var(--panel);padding:22px;border-radius:14px;margin-top:25px;border:1px solid var(--border)}
+.cart-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.qty{display:flex;align-items:center;gap:12px}
+.qty button{padding:7px 12px;background:var(--panel2);color:var(--mint);margin:0}
+.total{font-size:23px;color:var(--mint);font-weight:bold;margin:20px 0}
+.checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.checkout-panel label{display:block;margin:12px 0 5px;color:var(--muted)}
+.checkout-panel button{margin-top:18px}
+#checkoutMessage{overflow-wrap:anywhere}
+.tracking-status{font-size:20px;color:var(--mint);font-weight:bold;margin:10px 0}
+.tracking-id{overflow-wrap:anywhere;color:var(--muted);font-size:12px}
+.order-card{background:var(--panel2);padding:16px;border-radius:12px;margin:15px 0;border:1px solid var(--border)}
+.order-card p{margin:7px 0}
+.order-card .tracking-status{margin:10px 0}
+footer{text-align:center;padding:30px;color:var(--muted)}
+@media(max-width:600px){
+ .topbar{padding:14px}
+ main{padding:20px 15px}
+ .hero{padding:40px 15px}
+ .checkout-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+ <div class="logo">ISHAN MART</div>
+ <button class="cart-btn" onclick="document.getElementById('cartSection').scrollIntoView({behavior:'smooth'})">
+ Cart (<span id="cartCount">0</span>)
+ </button>
+</header>
+
+<section class="hero">
+ <h1>Fresh Shopping. <span>Better Living.</span></h1>
+ <p>Your everyday essentials, all in one place.</p>
+</section>
+
+<main>
+ <div class="toolbar">
+  <input id="searchInput" type="search" placeholder="Search products...">
+ </div>
+
+ <h2 class="section-title">Our Products</h2>
+ <p id="message">Connecting to Ishan Mart...</p>
+ <div id="productGrid" class="products"></div>
+
+ <section id="cartSection" class="cart-panel">
+  <h2>Your Shopping Cart</h2>
+  <div id="cartItems"></div>
+  <div class="total">Total: ₹<span id="cartTotal">0.00</span></div>
+ </section>
+
+ <section class="checkout-panel">
+  <h2>Checkout</h2>
+
+  <div class="checkout-grid">
+   <div>
+    <label for="customerName">Full name</label>
+    <input id="customerName" placeholder="Enter your name" maxlength="80">
+   </div>
+   <div>
+    <label for="customerPhone">Phone number</label>
+    <input id="customerPhone" type="tel" placeholder="Enter phone number" maxlength="10">
+   </div>
+  </div>
+
+  <label for="customerAddress">Delivery address</label>
+  <input id="customerAddress" placeholder="Enter delivery address" maxlength="300">
+
+  <label for="paymentMethod">Payment method</label>
+  <select id="paymentMethod">
+   <option value="COD">Cash on Delivery</option>
+   <option value="UPI">UPI</option>
+  </select>
+
+  <button class="primary" id="placeOrderButton" onclick="prepareCheckout()">
+   Place Order
+  </button>
+
+  <p id="checkoutMessage" style="color:var(--muted);font-size:13px"></p>
+ </section>
+
+ <section class="tracking-panel" id="trackingSection">
+  <h2>My Orders</h2>
+  <p id="trackingMessage" style="color:var(--muted)">
+   Your orders will appear here.
+  </p>
+  <div id="orderHistory"></div>
+ </section>
+</main>
+
+<footer>© 2026 Ishan Mart. All rights reserved.</footer>
+
+<script>
+(function(){
+
+const firebaseConfig = {
+ apiKey: "AIzaSyDci6dFkW3Sgfx8fzGjEYPQPbhG7EuwpXE",
+ authDomain: "ishan-mart.firebaseapp.com",
+ projectId: "ishan-mart",
+ storageBucket: "ishan-mart.firebasestorage.app",
+ messagingSenderId: "807194530965",
+ appId: "1:807194530965:web:de67c1361adfe1b2c7b79c"
+};
+
+let db;
+let auth;
+let products=[];
+let cart={};
+let isSubmitting=false;
+let currentUser=null;
+let orderListeners={};
+let orderStatuses={};
+
+const productGrid=document.getElementById("productGrid");
+const message=document.getElementById("message");
+
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+ });
+}
+
+try{
+ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+ db=firebase.firestore();
+ auth=firebase.auth();
+}catch(error){
+ message.textContent="Firebase error: "+error.message;
+ return;
+}
+
+// Reuse the existing anonymous account whenever possible.
+const authReady=auth.setPersistence(
+ firebase.auth.Auth.Persistence.LOCAL
+).then(function(){
+
+ if(auth.currentUser){
+  return auth.currentUser;
+ }
+
+ return auth.signInAnonymously().then(function(result){
+  return result.user;
+ });
+
+}).then(function(user){
+
+ currentUser=user;
+ return user;
+
+}).catch(function(error){
+
+ console.error("Authentication error:",error);
+ message.textContent="Customer sign-in failed: "+error.message;
+ throw error;
+
+});
+
+// Save and retrieve recent order IDs for this browser.
+function getSavedOrders(){
+ try{
+  const saved=JSON.parse(localStorage.getItem("ishanMartOrderIds")||"[]");
+  return Array.isArray(saved)?saved:[];
+ }catch(error){
+  return [];
+ }
+}
+
+function saveOrderId(id){
+ const ids=getSavedOrders().filter(function(savedId){
+  return savedId!==id;
+ });
+
+ ids.unshift(id);
+
+ // Keep the latest 20 order IDs.
+ localStorage.setItem(
+  "ishanMartOrderIds",
+  JSON.stringify(ids.slice(0,20))
+ );
+}
+
+// Show live status for an individual order.
+function trackOrder(orderId){
+
+ if(orderListeners[orderId])return;
+
+ orderListeners[orderId]=db.collection("orders")
+  .doc(orderId)
+  .onSnapshot(function(doc){
+
+   if(!doc.exists){
+    orderStatuses[orderId]={
+     status:"Order not found",
+     total:"",
+     createdAt:""
+    };
+    renderOrderHistory();
+    return;
+   }
+
+   const order=doc.data();
+
+   orderStatuses[orderId]={
+    status:order.status||"Pending",
+    total:order.total,
+    createdAt:order.createdAt
+   };
+
+   renderOrderHistory();
+
+  },function(error){
+
+   console.error("Tracking error:",error);
+
+   orderStatuses[orderId]={
+    status:"Unable to load status",
+    total:"",
+    createdAt:""
+   };
+
+   renderOrderHistory();
+
+  });
+
+}
+
+function renderOrderHistory(){
+
+ const container=document.getElementById("orderHistory");
+ const ids=getSavedOrders();
+
+ if(!ids.length){
+  document.getElementById("trackingMessage").textContent=
+   "You have not placed an order yet.";
+  container.innerHTML="";
+  return;
+ }
+
+ document.getElementById("trackingMessage").textContent=
+  "Your recent orders and their live status:";
+
+ container.innerHTML=ids.map(function(id,index){
+
+  const order=orderStatuses[id];
+
+  if(!order){
+   return `
+    <div class="order-card">
+     <div class="tracking-id">Order ID: ${escapeHTML(id)}</div>
+     <p style="color:var(--muted)">Loading order status...</p>
+    </div>
+   `;
+  }
+
+  return `
+   <div class="order-card">
+    <div class="tracking-id">Order ID: ${escapeHTML(id)}</div>
+    <div class="tracking-status">${escapeHTML(order.status)}</div>
+    ${order.total!==""?`<p>Total: ₹${Number(order.total).toFixed(2)}</p>`:""}
+    <p style="font-size:12px;color:var(--muted)">
+     ${index===0?"Latest order":"Previous order"}
+    </p>
+   </div>
+  `;
+
+ }).join("");
+
+}
+
+// Restore all saved orders after authentication.
+authReady.then(function(){
+
+ getSavedOrders().forEach(function(id){
+  trackOrder(id);
+ });
+
+}).catch(function(){
+ document.getElementById("trackingMessage").textContent=
+  "Sign-in is needed to track orders.";
+});
+
+// Load products from Firebase.
+db.collection("products").onSnapshot(function(snapshot){
+
+ products=snapshot.docs.map(function(doc){
+  return {id:doc.id,...doc.data()};
+ });
+
+ message.textContent=products.length
+  ? "Showing "+products.length+" products"
+  : "No products available yet.";
+
+ Object.keys(cart).forEach(function(id){
+  const p=products.find(function(item){return item.id===id;});
+  if(!p){delete cart[id];return;}
+  cart[id].name=p.name;
+  cart[id].price=Number(p.price)||0;
+ });
+
+ renderProducts();
+ renderCart();
+
+},function(error){
+ message.textContent="Could not load products: "+error.message;
+});
+
+function renderProducts(){
+
+ const search=document.getElementById("searchInput").value.toLowerCase();
+
+ const filtered=products.filter(function(p){
+  return String(p.name||"").toLowerCase().includes(search);
+ });
+
+ if(!filtered.length){
+  productGrid.innerHTML='<div class="empty">No matching products found.</div>';
+  return;
+ }
+
+ productGrid.innerHTML=filtered.map(function(p){
+
+  const price=Number(p.price)||0;
+  const quantity=cart[p.id]?cart[p.id].quantity:0;
+  const image=p.imageUrl||"";
+
+  return `
+   <div class="card">
+    ${image
+     ? `<img class="product-image" src="${escapeHTML(image)}" alt="${escapeHTML(p.name||"Product")}" onerror="this.style.display='none'">`
+     : `<div class="product-image" style="display:grid;place-items:center;font-size:45px">🛍️</div>`
+    }
+    <h3>${escapeHTML(p.name||"Product")}</h3>
+    <div class="price">₹${price.toFixed(2)}</div>
+
+    ${quantity>0?`
+     <div class="card-qty">
+      <button data-minus="${escapeHTML(p.id)}">−</button>
+      <span>${quantity}</span>
+      <button data-plus="${escapeHTML(p.id)}">+</button>
+     </div>
+    `:`
+     <button class="primary add-button" data-add="${escapeHTML(p.id)}">Add to Cart</button>
+    `}
+   </div>
+  `;
+ }).join("");
+}
+
+function changeQuantity(id,change){
+
+ const p=products.find(function(item){return item.id===id;});
+ if(!p)return;
+
+ const current=cart[id]?cart[id].quantity:0;
+ const next=current+change;
+
+ if(next<=0){
+  delete cart[id];
+ }else{
+  cart[id]={
+   name:p.name,
+   price:Number(p.price)||0,
+   quantity:next
+  };
+ }
+
+ renderProducts();
+ renderCart();
+}
+
+productGrid.addEventListener("click",function(event){
+
+ const add=event.target.closest("[data-add]");
+ const plus=event.target.closest("[data-plus]");
+ const minus=event.target.closest("[data-minus]");
+
+ if(add)changeQuantity(add.dataset.add,1);
+ if(plus)changeQuantity(plus.dataset.plus,1);
+ if(minus)changeQuantity(minus.dataset.minus,-1);
+
+});
+
+function renderCart(){
+
+ const cartItems=document.getElementById("cartItems");
+ const ids=Object.keys(cart);
+
+ if(!ids.length){
+  cartItems.innerHTML='<p style="color:var(--muted)">Your cart is empty.</p>';
+ }else{
+  cartItems.innerHTML=ids.map(function(id){
+
+   const item=cart[id];
+
+   return `
+    <div class="cart-row">
+     <div>
+      <strong>${escapeHTML(item.name)}</strong>
+      <div style="color:var(--muted);font-size:13px">₹${item.price.toFixed(2)} each</div>
+     </div>
+     <div class="qty">
+      <button data-minus="${escapeHTML(id)}">−</button>
+      <span>${item.quantity}</span>
+      <button data-plus="${escapeHTML(id)}">+</button>
+     </div>
+    </div>
+   `;
+
+  }).join("");
+ }
+
+ const count=ids.reduce(function(sum,id){return sum+cart[id].quantity;},0);
+ const total=ids.reduce(function(sum,id){return sum+cart[id].price*cart[id].quantity;},0);
+
+ document.getElementById("cartCount").textContent=count;
+ document.getElementById("cartTotal").textContent=total.toFixed(2);
+}
+
+document.getElementById("cartItems").addEventListener("click",function(event){
+
+ const plus=event.target.closest("[data-plus]");
+ const minus=event.target.closest("[data-minus]");
+
+ if(plus)changeQuantity(plus.dataset.plus,1);
+ if(minus)changeQuantity(minus.dataset.minus,-1);
+
+});
+
+document.getElementById("searchInput").addEventListener("input",renderProducts);
+
+// Place a new order without deleting earlier orders.
+window.prepareCheckout=async function(){
+
+ if(isSubmitting)return;
+
+ const name=document.getElementById("customerName").value.trim();
+ const phone=document.getElementById("customerPhone").value.trim();
+ const address=document.getElementById("customerAddress").value.trim();
+ const paymentMethod=document.getElementById("paymentMethod").value;
+ const output=document.getElementById("checkoutMessage");
+ const button=document.getElementById("placeOrderButton");
+
+ const ids=Object.keys(cart);
+
+ if(!ids.length){
+  output.textContent="Please add products to your cart first.";
+  return;
+ }
+
+ if(!name||!phone||!address){
+  output.textContent="Please complete all customer details.";
+  return;
+ }
+
+ if(!/^[0-9]{10}$/.test(phone)){
+  output.textContent="Please enter a valid 10-digit phone number.";
+  return;
+ }
+
+ isSubmitting=true;
+ button.disabled=true;
+ button.textContent="Placing Order...";
+ output.textContent="Connecting securely...";
+
+ try{
+
+  const user=await authReady;
+
+  if(!user){
+   throw new Error("Customer sign-in is unavailable. Please refresh.");
+  }
+
+  const orderItems=[];
+
+  for(const id of ids){
+
+   const product=products.find(function(p){return p.id===id;});
+
+   if(!product){
+    throw new Error("A product in your cart is no longer available.");
+   }
+
+   const price=Number(product.price);
+   const quantity=cart[id].quantity;
+
+   if(!Number.isFinite(price)||price<0||!Number.isInteger(quantity)||quantity<1){
+    throw new Error("One of your cart items has invalid details.");
+   }
+
+   orderItems.push({
+    productId:id,
+    name:String(product.name||"Product"),
+    price:price,
+    quantity:quantity,
+    subtotal:price*quantity
+   });
+
+  }
+
+  const total=orderItems.reduce(function(sum,item){
+   return sum+item.subtotal;
+  },0);
+
+  const orderData={
+   customerUid:user.uid,
+   customerName:name,
+   phone:phone,
+   address:address,
+   paymentMethod:paymentMethod,
+   items:orderItems,
+   total:Number(total.toFixed(2)),
+   status:"Pending",
+   createdAt:new Date().toISOString()
+  };
+
+  output.textContent="Submitting your order...";
+
+  const orderRef=await db.collection("orders").add(orderData);
+
+  saveOrderId(orderRef.id);
+  trackOrder(orderRef.id);
+
+  cart={};
+  renderProducts();
+  renderCart();
+
+  output.innerHTML=
+   '<strong style="color:var(--mint)">Order placed successfully!</strong><br>'+
+   'Your Order ID: <strong>'+escapeHTML(orderRef.id)+'</strong><br>'+
+   'You can track it in My Orders below.';
+
+  renderOrderHistory();
+
+  document.getElementById("trackingSection").scrollIntoView({
+   behavior:"smooth",
+   block:"center"
+  });
+
+ }catch(error){
+
+  console.error("Order submission error:",error);
+  output.textContent="Could not place your order: "+error.message;
+
+ }finally{
+
+  isSubmitting=false;
+  button.disabled=false;
+  button.textContent="Place Order";
+
+ }
+
+};
+
+})();
+</script>
+
+</body>
+</html>
