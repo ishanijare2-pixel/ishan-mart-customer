@@ -1,0 +1,27 @@
+
+{
+  "id": "/",
+  "name": "Ishan Mart",
+  "short_name": "Ishan Mart",
+  "description": "Shop groceries easily with Ishan Mart.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#073B3A",
+  "theme_color": "#073B3A",
+  "icons": [
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
