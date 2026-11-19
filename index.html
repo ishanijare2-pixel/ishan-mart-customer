@@ -71,6 +71,8 @@ footer{text-align:center;padding:30px;color:var(--muted)}
  .checkout-grid{grid-template-columns:1fr}
 }
 </style>
+ <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 
 <body>
@@ -605,7 +607,26 @@ window.prepareCheckout=async function(){
 };
 
 })();
+
 </script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js")
+      .then(function () {
+        console.log("Ishan Mart app is ready");
+      })
+      .catch(function (error) {
+        console.error("Service worker error:", error);
+      });
+  });
+}
+</script>
+
+</body>
+</html>
+
 
 </body>
 </html>
