@@ -4,629 +4,1070 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#073B3A">
-<title>Ishan Mart | Online Grocery</title>
+<meta name="theme-color" content="#063f3b">
+<title>Ishan Mart</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --deep:#063f3b;
+  --deep2:#092e2b;
+  --mint:#a8f0d4;
+  --mint2:#d9fff0;
+  --bg:#f4faf7;
+  --white:#fff;
+  --text:#173a35;
+  --muted:#78918a;
+  --line:#e2eee8;
+  --red:#e65b5b;
+  --orange:#ed9b42;
+  --shadow:0 10px 35px rgba(6,63,59,.09);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  padding-bottom:95px;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--deep);
+  color:white;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity .5s;
+}
+.splash-logo{
+  width:86px;height:86px;border-radius:28px;
+  background:var(--mint);color:var(--deep);
+  display:grid;place-items:center;font-size:42px;
+  font-weight:900;box-shadow:0 15px 40px #0003;
+  animation:float 1.5s infinite ease-in-out;
+}
+#splash h1{font-family:Outfit;margin:20px 0 5px}
+#splash p{color:var(--mint);font-size:13px}
+@keyframes float{50%{transform:translateY(-8px)}}
+header{
+  background:var(--deep);color:white;
+  padding:18px 18px 25px;border-radius:0 0 28px 28px;
+}
+.topbar{display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:Outfit;font-size:23px;font-weight:800}
+.brand span{color:var(--mint)}
+.location{font-size:12px;color:#c6e8dc;margin-top:4px}
+.icon-btn{
+  border:0;background:#ffffff18;color:white;
+  width:42px;height:42px;border-radius:14px;font-size:19px;
+}
+.search-wrap{margin-top:20px;position:relative}
+.search-wrap input{
+  width:100%;padding:15px 16px 15px 45px;
+  border:0;border-radius:15px;outline:0;
+  background:#fff;color:var(--text);
+}
+.search-icon{position:absolute;left:16px;top:13px;color:#77928a}
+main{max-width:900px;margin:auto;padding:18px}
+.hero{
+  background:linear-gradient(120deg,#0b6257,#063f3b);
+  border-radius:22px;padding:22px;color:white;
+  min-height:155px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.hero:after{
+  content:"🥑";position:absolute;right:22px;bottom:5px;
+  font-size:90px;opacity:.2;transform:rotate(-15deg);
+}
+.hero h2{font:700 25px Outfit;margin:0 0 8px;max-width:230px}
+.hero p{font-size:13px;color:#d1f5e7;max-width:220px}
+.hero button{
+  border:0;border-radius:12px;padding:10px 16px;
+  background:var(--mint);color:var(--deep);font-weight:800;
+}
+.section-head{
+  display:flex;justify-content:space-between;
+  align-items:center;margin:25px 0 13px;
+}
+.section-head h3{font:700 19px Outfit;margin:0}
+.section-head button{
+  border:0;background:none;color:#16806c;font-weight:700;
+}
+.categories{
+  display:flex;gap:12px;overflow-x:auto;padding:3px 1px 10px;
+}
+.cat{
+  min-width:76px;border:1px solid var(--line);
+  background:white;border-radius:17px;padding:12px 7px;
+  text-align:center;color:var(--text);
+  transition:.2s;
+}
+.cat:active{transform:scale(.94)}
+.cat .emoji{font-size:27px;display:block;animation:catFloat 2.5s infinite}
+.cat small{font-size:11px;font-weight:700}
+@keyframes catFloat{50%{transform:translateY(-3px)}}
+.products{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;
+}
+.product{
+  background:white;border:1px solid var(--line);
+  border-radius:19px;padding:10px;position:relative;
+  overflow:hidden;box-shadow:0 4px 15px #063f3b08;
+}
+.product-image{
+  width:100%;height:130px;object-fit:cover;
+  border-radius:13px;background:#edf6f1;
+}
+.product h4{margin:10px 0 4px;font-size:14px}
+.product .muted{font-size:11px;color:var(--muted)}
+.price-row{display:flex;align-items:center;gap:7px;margin-top:8px}
+.price{font-size:16px;font-weight:800;color:var(--deep)}
+.old-price{text-decoration:line-through;color:#9baaa4;font-size:11px}
+.discount{font-size:10px;color:#16805e;font-weight:800}
+.stock-label{font-size:10px;margin-top:5px;color:#16805e}
+.stock-label.low{color:#d17b24}
+.stock-label.out{color:var(--red)}
+.add-btn{
+  width:100%;margin-top:10px;border:0;border-radius:11px;
+  padding:10px;background:var(--deep);color:white;font-weight:800;
+}
+.add-btn:disabled{background:#b6c7c0;cursor:not-allowed}
+.fav{
+  position:absolute;right:17px;top:17px;
+  width:32px;height:32px;border:0;border-radius:50%;
+  background:#ffffffed;color:#73877f;font-size:17px;
+}
+.fav.active{color:#e64e69}
+.skeleton{
+  height:220px;border-radius:18px;
+  background:linear-gradient(90deg,#eaf1ed 25%,#f7fbf8 50%,#eaf1ed 75%);
+  background-size:200% 100%;animation:shine 1.2s infinite;
+}
+@keyframes shine{to{background-position:-200% 0}}
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#ffffffed;backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  display:flex;justify-content:space-around;
+  padding:10px 4px calc(10px + env(safe-area-inset-bottom));
+  z-index:50;
+}
+.nav-item{
+  border:0;background:none;color:#82958e;
+  font-size:10px;font-weight:700;display:flex;
+  flex-direction:column;align-items:center;gap:4px;
+}
+.nav-item span{font-size:21px}
+.nav-item.active{color:var(--deep)}
+.floating-cart{
+  position:fixed;right:18px;bottom:85px;
+  background:var(--deep);color:white;border:0;
+  border-radius:18px;padding:13px 18px;
+  box-shadow:0 8px 25px #063f3b45;z-index:40;
+  font-weight:800;
+}
+.panel{display:none}
+.panel.active{display:block;animation:appear .25s}
+@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.back-btn{
+  border:0;background:#e4f4ec;color:var(--deep);
+  border-radius:12px;padding:10px 14px;font-weight:800;
+}
+.card{
+  background:white;border:1px solid var(--line);
+  border-radius:18px;padding:16px;margin-bottom:13px;
+}
+.field{margin:12px 0}
+.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}
+.field input,.field textarea,.field select{
+  width:100%;padding:13px;border:1px solid var(--line);
+  border-radius:12px;outline:0;background:#fbfdfb;
+}
+.field textarea{min-height:75px;resize:vertical}
+.primary{
+  background:var(--deep);color:white;border:0;
+  padding:13px 17px;border-radius:12px;font-weight:800;
+}
+.secondary{
+  background:var(--mint2);color:var(--deep);border:0;
+  padding:11px 14px;border-radius:12px;font-weight:800;
+}
+.danger{background:#fff0f0;color:#c64d4d;border:0;padding:10px 13px;border-radius:11px;font-weight:700}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.small{font-size:12px;color:var(--muted)}
+.total-line{display:flex;justify-content:space-between;margin:10px 0;font-size:13px}
+.total-line.final{font-size:18px;font-weight:900;border-top:1px solid var(--line);padding-top:13px}
+.detail-image{width:100%;height:260px;object-fit:cover;border-radius:20px;background:#eaf4ef}
+.detail-title{font:800 25px Outfit;margin:15px 0 5px}
+.stars{color:#efa82e;letter-spacing:2px}
+.timeline{margin:18px 0 8px}
+.step{display:flex;gap:12px;position:relative;padding-bottom:20px}
+.step:not(:last-child):before{
+  content:"";position:absolute;left:12px;top:27px;
+  height:calc(100% - 18px);width:2px;background:#dcebe3;
+}
+.dot{width:25px;height:25px;border-radius:50%;background:#e4eee8;z-index:1;display:grid;place-items:center;font-size:12px}
+.step.done .dot{background:var(--mint);color:var(--deep)}
+.toast{
+  position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);
+  background:#123f37;color:white;padding:12px 18px;border-radius:13px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:999;
+  max-width:90%;font-size:13px;text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.empty{text-align:center;padding:35px 15px;color:var(--muted)}
+.empty b{display:block;font-size:35px;margin-bottom:8px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap}
+.filter-row select{padding:10px;border:1px solid var(--line);border-radius:10px;background:white}
+@media(min-width:650px){
+  .products{grid-template-columns:repeat(3,minmax(0,1fr))}
+  main{padding:24px}
+  .product-image{height:165px}
+}
+</style>
+</head>
+
+<body>
+
+<div id="splash">
+  <div class="splash-logo">I</div>
+  <h1>ISHAN MART</h1>
+  <p>Fresh choices. Happy living.</p>
+</div>
+
+<header>
+  <div class="topbar">
+    <div>
+      <div class="brand">ISHAN <span>MART</span></div>
+      <div class="location">📍 Your neighbourhood grocery store</div>
+    </div>
+    <button class="icon-btn" onclick="showPanel('profile')">👤</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="searchInput" placeholder="Search groceries..." oninput="renderProducts()">
+  </div>
+</header>
+
+<main>
+  <section id="homePanel" class="panel active">
+    <div class="hero">
+      <h2>Fresh groceries, delivered simply.</h2>
+      <p>Everyday essentials, handpicked for your home.</p>
+      <button onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Shop now →</button>
+    </div>
+
+    <div class="section-head"><h3>Shop by category</h3></div>
+    <div class="categories" id="categories"></div>
+
+    <div class="section-head"><h3>Popular picks</h3><button onclick="showAllProducts()">See all</button></div>
+    <div class="products" id="popularProducts">
+      <div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+
+    <div class="section-head"><h3>Picked for you</h3></div>
+    <div class="products" id="recommendedProducts"></div>
+
+    <div class="section-head"><h3>Recently added</h3></div>
+    <div class="products" id="recentProducts"></div>
+
+    <div class="section-head" id="productsSection"><h3>All products</h3></div>
+    <div class="filter-row">
+      <select id="sortSelect" onchange="renderProducts()">
+        <option value="default">Sort: Recommended</option>
+        <option value="priceLow">Price: Low to high</option>
+        <option value="priceHigh">Price: High to low</option>
+        <option value="name">Name: A to Z</option>
+        <option value="newest">Newest first</option>
+      </select>
+      <select id="stockFilter" onchange="renderProducts()">
+        <option value="all">All stock</option>
+        <option value="available">In stock</option>
+        <option value="low">Low stock</option>
+      </select>
+    </div>
+    <div class="products" id="allProducts" style="margin-top:13px"></div>
+  </section>
+
+  <section id="wishlistPanel" class="panel">
+    <div class="section-head"><h3>♡ My favourites</h3></div>
+    <div class="products" id="wishlistProducts"></div>
+  </section>
+
+  <section id="cartPanel" class="panel">
+    <div class="section-head"><h3>My cart</h3></div>
+    <div id="cartContent"></div>
+  </section>
+
+  <section id="ordersPanel" class="panel">
+    <div class="section-head"><h3>My orders</h3></div>
+    <p class="small">Your order history is loaded from this device's signed-in customer account.</p>
+    <div id="ordersContent"></div>
+  </section>
+
+  <section id="profilePanel" class="panel">
+    <div class="section-head"><h3>My account</h3></div>
+    <div class="card">
+      <h3 style="margin-top:0">Customer profile</h3>
+      <div class="field"><label>Your name</label><input id="profileName" placeholder="Enter your name"></div>
+      <div class="field"><label>Phone number</label><input id="profilePhone" placeholder="Enter phone number" inputmode="tel"></div>
+      <button class="primary" onclick="saveProfile()">Save profile</button>
+    </div>
+    <div class="card">
+      <div class="row"><h3>Saved addresses</h3><button class="secondary" onclick="addAddress()">+ Add</button></div>
+      <div id="addressesList"></div>
+    </div>
+    <div class="card">
+      <h3>Recently viewed</h3>
+      <div class="products" id="viewedProducts"></div>
+    </div>
+    <div class="card">
+      <h3>Recently purchased</h3>
+      <div id="purchasedProducts"></div>
+    </div>
+    <div class="card">
+      <h3>Customer support</h3>
+      <p class="small">Need help with an order or product? Contact the store.</p>
+      <div class="field"><label>Support email</label><input id="supportEmail" value="support@ishanmart.example" readonly></div>
+      <button class="secondary" onclick="contactSupport()">Contact support</button>
+    </div>
+  </section>
+
+  <section id="detailPanel" class="panel">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div id="detailContent" style="margin-top:15px"></div>
+  </section>
+
+  <section id="checkoutPanel" class="panel">
+    <button class="back-btn" onclick="showPanel('cart')">← Back to cart</button>
+    <div class="section-head"><h3>Checkout</h3></div>
+    <div class="card">
+      <h3 style="margin-top:0">Delivery details</h3>
+      <div class="field"><label>Customer name</label><input id="checkoutName"></div>
+      <div class="field"><label>Phone number</label><input id="checkoutPhone" inputmode="tel"></div>
+      <div class="field"><label>Delivery address</label><textarea id="checkoutAddress" placeholder="House number, street, area"></textarea></div>
+      <div class="field"><label>Delivery instructions (optional)</label><textarea id="deliveryInstructions" placeholder="Example: Please ring the doorbell"></textarea></div>
+      <div class="field"><label>Payment method</label>
+        <select id="paymentMethod">
+          <option value="COD">Cash on Delivery</option>
+          <option value="UPI">UPI (payment choice only)</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Coupon code</h3>
+      <div class="row">
+        <input id="couponInput" placeholder="Enter coupon" style="min-width:0;width:65%;padding:12px;border:1px solid var(--line);border-radius:11px">
+        <button class="secondary" onclick="applyCoupon()">Apply</button>
+      </div>
+      <p id="couponMessage" class="small"></p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Bill summary</h3>
+      <div id="checkoutSummary"></div>
+      <p class="small">Estimated delivery: 45–60 minutes. This is an estimate, not live tracking.</p>
+      <button class="primary" style="width:100%;margin-top:12px" id="placeOrderBtn" onclick="placeOrder()">Place order</button>
+    </div>
+  </section>
+
+  <section id="confirmationPanel" class="panel">
+    <div class="card" style="text-align:center;padding:35px 18px">
+      <div style="font-size:55px">🎉</div>
+      <h2>Order placed!</h2>
+      <p class="small">Thank you for shopping with Ishan Mart.</p>
+      <p id="confirmationId" style="font-weight:800"></p>
+      <button class="primary" onclick="showPanel('orders')">Track my order</button>
+      <button class="secondary" onclick="showPanel('home')" style="margin-left:5px">Continue shopping</button>
+    </div>
+  </section>
+</main>
+
+<button class="floating-cart" id="floatingCart" onclick="showPanel('cart')">🛒 Cart · 0</button>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" data-panel="home" onclick="showPanel('home')"><span>⌂</span>Home</button>
+  <button class="nav-item" data-panel="wishlist" onclick="showPanel('wishlist')"><span>♡</span>Saved</button>
+  <button class="nav-item" data-panel="cart" onclick="showPanel('cart')"><span>🛒</span>Cart</button>
+  <button class="nav-item" data-panel="orders" onclick="showPanel('orders')"><span>▤</span>Orders</button>
+  <button class="nav-item" data-panel="profile" onclick="showPanel('profile')"><span>☺</span>Account</button>
+</nav>
+
+<div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
-<style>
-:root{
- --bg:#102B2B;--panel:#173735;--panel2:#204440;
- --mint:#43D6BD;--light:#A4F4E5;--text:#F1FFFC;
- --muted:#A6C5BF;--border:#315B55;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-button,input,select{font:inherit}
-button{cursor:pointer;border:0;border-radius:10px;padding:12px 16px;font-weight:bold}
-button:disabled{opacity:.6;cursor:not-allowed}
-.topbar{background:#0B2222;padding:17px 6%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;border-bottom:1px solid var(--border)}
-.logo{font-size:25px;font-weight:900;color:var(--mint);letter-spacing:1px}
-.primary,.cart-btn{background:var(--mint);color:#082522}
-.primary:hover,.cart-btn:hover{background:var(--light)}
-.hero{padding:65px 6%;background:linear-gradient(120deg,#1C4944,#102B2B);text-align:center}
-.hero h1{font-size:clamp(30px,5vw,48px);margin:0 0 12px}
-.hero h1 span{color:var(--mint)}
-.hero p{color:var(--muted)}
-main{padding:30px 6%;max-width:1250px;margin:auto}
-.toolbar{display:flex;gap:12px;margin-bottom:25px}
-.toolbar input{flex:1;min-width:200px}
-input,select{background:#102B2B;color:white;border:1px solid var(--border);padding:13px;border-radius:9px;width:100%}
-input::placeholder{color:#8BAEA7}
-.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
-.card{background:var(--panel);padding:16px;border:1px solid var(--border);border-radius:15px;transition:.2s}
-.card:hover{border-color:var(--mint);transform:translateY(-2px)}
-.product-image{height:150px;width:100%;object-fit:cover;background:var(--panel2);border-radius:10px}
-.card h3{margin:13px 0 7px}
-.price{color:var(--mint);font-size:21px;font-weight:bold}
-.card .add-button{width:100%;margin-top:12px}
-.card-qty{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:12px}
-.card-qty button{background:var(--mint);color:#082522;padding:9px 16px}
-.card-qty span{font-weight:bold;min-width:15px;text-align:center}
-.section-title{margin:35px 0 18px}
-#message{color:var(--light);margin:15px 0}
-.empty{color:var(--muted);padding:30px;text-align:center;background:var(--panel);border-radius:12px}
-.cart-panel,.checkout-panel,.tracking-panel{background:var(--panel);padding:22px;border-radius:14px;margin-top:25px;border:1px solid var(--border)}
-.cart-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
-.qty{display:flex;align-items:center;gap:12px}
-.qty button{padding:7px 12px;background:var(--panel2);color:var(--mint);margin:0}
-.total{font-size:23px;color:var(--mint);font-weight:bold;margin:20px 0}
-.checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.checkout-panel label{display:block;margin:12px 0 5px;color:var(--muted)}
-.checkout-panel button{margin-top:18px}
-#checkoutMessage{overflow-wrap:anywhere}
-.tracking-status{font-size:20px;color:var(--mint);font-weight:bold;margin:10px 0}
-.tracking-id{overflow-wrap:anywhere;color:var(--muted);font-size:12px}
-.order-card{background:var(--panel2);padding:16px;border-radius:12px;margin:15px 0;border:1px solid var(--border)}
-.order-card p{margin:7px 0}
-.order-card .tracking-status{margin:10px 0}
-footer{text-align:center;padding:30px;color:var(--muted)}
-@media(max-width:600px){
- .topbar{padding:14px}
- main{padding:20px 15px}
- .hero{padding:40px 15px}
- .checkout-grid{grid-template-columns:1fr}
-}
-</style>
- <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-</head>
-
-<body>
-
-<header class="topbar">
- <div class="logo">ISHAN MART</div>
- <button class="cart-btn" onclick="document.getElementById('cartSection').scrollIntoView({behavior:'smooth'})">
- Cart (<span id="cartCount">0</span>)
- </button>
-</header>
-
-<section class="hero">
- <h1>Fresh Shopping. <span>Better Living.</span></h1>
- <p>Your everyday essentials, all in one place.</p>
-</section>
-
-<main>
- <div class="toolbar">
-  <input id="searchInput" type="search" placeholder="Search products...">
- </div>
-
- <h2 class="section-title">Our Products</h2>
- <p id="message">Connecting to Ishan Mart...</p>
- <div id="productGrid" class="products"></div>
-
- <section id="cartSection" class="cart-panel">
-  <h2>Your Shopping Cart</h2>
-  <div id="cartItems"></div>
-  <div class="total">Total: ₹<span id="cartTotal">0.00</span></div>
- </section>
-
- <section class="checkout-panel">
-  <h2>Checkout</h2>
-
-  <div class="checkout-grid">
-   <div>
-    <label for="customerName">Full name</label>
-    <input id="customerName" placeholder="Enter your name" maxlength="80">
-   </div>
-   <div>
-    <label for="customerPhone">Phone number</label>
-    <input id="customerPhone" type="tel" placeholder="Enter phone number" maxlength="10">
-   </div>
-  </div>
-
-  <label for="customerAddress">Delivery address</label>
-  <input id="customerAddress" placeholder="Enter delivery address" maxlength="300">
-
-  <label for="paymentMethod">Payment method</label>
-  <select id="paymentMethod">
-   <option value="COD">Cash on Delivery</option>
-   <option value="UPI">UPI</option>
-  </select>
-
-  <button class="primary" id="placeOrderButton" onclick="prepareCheckout()">
-   Place Order
-  </button>
-
-  <p id="checkoutMessage" style="color:var(--muted);font-size:13px"></p>
- </section>
-
- <section class="tracking-panel" id="trackingSection">
-  <h2>My Orders</h2>
-  <p id="trackingMessage" style="color:var(--muted)">
-   Your orders will appear here.
-  </p>
-  <div id="orderHistory"></div>
- </section>
-</main>
-
-<footer>© 2026 Ishan Mart. All rights reserved.</footer>
-
 <script>
-(function(){
-
+// =====================================
+// FIREBASE CONFIGURATION
+// =====================================
 const firebaseConfig = {
- apiKey: "AIzaSyDci6dFkW3Sgfx8fzGjEYPQPbhG7EuwpXE",
- authDomain: "ishan-mart.firebaseapp.com",
- projectId: "ishan-mart",
- storageBucket: "ishan-mart.firebasestorage.app",
- messagingSenderId: "807194530965",
- appId: "1:807194530965:web:de67c1361adfe1b2c7b79c"
+  apiKey: "AIzaSyDci6dFkW3Sgfx8fzGjEYPQPbhG7EuwpXE",
+  authDomain: "ishan-mart.firebaseapp.com",
+  projectId: "ishan-mart",
+  storageBucket: "ishan-mart.firebasestorage.app",
+  messagingSenderId: "807194530965",
+  appId: "1:807194530965:web:de67c1361adfe1b2c7b79c"
 };
 
-let db;
-let auth;
-let products=[];
-let cart={};
-let isSubmitting=false;
-let currentUser=null;
-let orderListeners={};
-let orderStatuses={};
+// =====================================
+// STORE SETTINGS - EDIT THESE LATER
+// =====================================
+const SETTINGS = {
+  deliveryCharge: 30,
+  freeDeliveryAbove: 499,
+  minimumOrder: 99,
+  estimatedDelivery: "45–60 minutes",
+  lowStockLimit: 5,
+  couponCode: "MART10",
+  couponPercent: 10,
+  couponMaxDiscount: 50
+};
 
-const productGrid=document.getElementById("productGrid");
-const message=document.getElementById("message");
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-function escapeHTML(value){
- return String(value).replace(/[&<>"']/g,function(c){
-  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
- });
+let currentUser = null;
+let products = [];
+let cart = JSON.parse(localStorage.getItem("im_cart") || "[]");
+let wishlist = JSON.parse(localStorage.getItem("im_wishlist") || "[]");
+let viewed = JSON.parse(localStorage.getItem("im_viewed") || "[]");
+let savedForLater = JSON.parse(localStorage.getItem("im_saved") || "[]");
+let addresses = JSON.parse(localStorage.getItem("im_addresses") || "[]");
+let profile = JSON.parse(localStorage.getItem("im_profile") || "{}");
+let recentOrderIds = JSON.parse(localStorage.getItem("im_order_ids") || "[]");
+let appliedCoupon = null;
+let selectedCategory = "All";
+let activeProductId = null;
+let previousPanel = "home";
+let toastTimer = null;
+
+// =====================================
+// HELPERS
+// =====================================
+function money(n){return "₹"+Number(n||0).toFixed(2)}
+function escapeHTML(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function showToast(message){
+  const el=document.getElementById("toast");
+  el.textContent=message;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove("show"),2400);
+}
+function saveLocal(){
+  localStorage.setItem("im_cart",JSON.stringify(cart));
+  localStorage.setItem("im_wishlist",JSON.stringify(wishlist));
+  localStorage.setItem("im_viewed",JSON.stringify(viewed));
+  localStorage.setItem("im_saved",JSON.stringify(savedForLater));
+  localStorage.setItem("im_addresses",JSON.stringify(addresses));
+  localStorage.setItem("im_profile",JSON.stringify(profile));
+}
+function getStock(p){
+  const value=p.stock ?? p.quantity ?? 999;
+  return Math.max(0,Number(value)||0);
+}
+function getImage(p){
+  return p.image || p.imageUrl || p.photo || "";
+}
+function getOldPrice(p){
+  return Number(p.oldPrice || p.originalPrice || p.mrp || p.compareAtPrice || 0);
+}
+function getPrice(p){return Number(p.price||0)}
+function getCategory(p){return p.category||"Other"}
+function findProduct(id){return products.find(p=>p.id===id)}
+function cartCount(){return cart.reduce((n,x)=>n+x.quantity,0)}
+function cartSubtotal(){return cart.reduce((n,x)=>n+x.price*x.quantity,0)}
+function getDelivery(subtotal){
+  return subtotal>=SETTINGS.freeDeliveryAbove ? 0 : SETTINGS.deliveryCharge;
+}
+function couponDiscount(subtotal){
+  if(!appliedCoupon)return 0;
+  return Math.min(subtotal*SETTINGS.couponPercent/100,SETTINGS.couponMaxDiscount);
+}
+function updateFloatingCart(){
+  document.getElementById("floatingCart").textContent=`🛒 Cart · ${cartCount()}`;
 }
 
-try{
- if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
- db=firebase.firestore();
- auth=firebase.auth();
-}catch(error){
- message.textContent="Firebase error: "+error.message;
- return;
-}
-
-// Reuse the existing anonymous account whenever possible.
-const authReady=auth.setPersistence(
- firebase.auth.Auth.Persistence.LOCAL
-).then(function(){
-
- if(auth.currentUser){
-  return auth.currentUser;
- }
-
- return auth.signInAnonymously().then(function(result){
-  return result.user;
- });
-
-}).then(function(user){
-
- currentUser=user;
- return user;
-
-}).catch(function(error){
-
- console.error("Authentication error:",error);
- message.textContent="Customer sign-in failed: "+error.message;
- throw error;
-
-});
-
-// Save and retrieve recent order IDs for this browser.
-function getSavedOrders(){
- try{
-  const saved=JSON.parse(localStorage.getItem("ishanMartOrderIds")||"[]");
-  return Array.isArray(saved)?saved:[];
- }catch(error){
-  return [];
- }
-}
-
-function saveOrderId(id){
- const ids=getSavedOrders().filter(function(savedId){
-  return savedId!==id;
- });
-
- ids.unshift(id);
-
- // Keep the latest 20 order IDs.
- localStorage.setItem(
-  "ishanMartOrderIds",
-  JSON.stringify(ids.slice(0,20))
- );
-}
-
-// Show live status for an individual order.
-function trackOrder(orderId){
-
- if(orderListeners[orderId])return;
-
- orderListeners[orderId]=db.collection("orders")
-  .doc(orderId)
-  .onSnapshot(function(doc){
-
-   if(!doc.exists){
-    orderStatuses[orderId]={
-     status:"Order not found",
-     total:"",
-     createdAt:""
-    };
-    renderOrderHistory();
-    return;
-   }
-
-   const order=doc.data();
-
-   orderStatuses[orderId]={
-    status:order.status||"Pending",
-    total:order.total,
-    createdAt:order.createdAt
-   };
-
-   renderOrderHistory();
-
-  },function(error){
-
-   console.error("Tracking error:",error);
-
-   orderStatuses[orderId]={
-    status:"Unable to load status",
-    total:"",
-    createdAt:""
-   };
-
-   renderOrderHistory();
-
-  });
-
-}
-
-function renderOrderHistory(){
-
- const container=document.getElementById("orderHistory");
- const ids=getSavedOrders();
-
- if(!ids.length){
-  document.getElementById("trackingMessage").textContent=
-   "You have not placed an order yet.";
-  container.innerHTML="";
-  return;
- }
-
- document.getElementById("trackingMessage").textContent=
-  "Your recent orders and their live status:";
-
- container.innerHTML=ids.map(function(id,index){
-
-  const order=orderStatuses[id];
-
-  if(!order){
-   return `
-    <div class="order-card">
-     <div class="tracking-id">Order ID: ${escapeHTML(id)}</div>
-     <p style="color:var(--muted)">Loading order status...</p>
-    </div>
-   `;
-  }
-
-  return `
-   <div class="order-card">
-    <div class="tracking-id">Order ID: ${escapeHTML(id)}</div>
-    <div class="tracking-status">${escapeHTML(order.status)}</div>
-    ${order.total!==""?`<p>Total: ₹${Number(order.total).toFixed(2)}</p>`:""}
-    <p style="font-size:12px;color:var(--muted)">
-     ${index===0?"Latest order":"Previous order"}
-    </p>
-   </div>
-  `;
-
- }).join("");
-
-}
-
-// Restore all saved orders after authentication.
-authReady.then(function(){
-
- getSavedOrders().forEach(function(id){
-  trackOrder(id);
- });
-
-}).catch(function(){
- document.getElementById("trackingMessage").textContent=
-  "Sign-in is needed to track orders.";
-});
-
-// Load products from Firebase.
-db.collection("products").onSnapshot(function(snapshot){
-
- products=snapshot.docs.map(function(doc){
-  return {id:doc.id,...doc.data()};
- });
-
- message.textContent=products.length
-  ? "Showing "+products.length+" products"
-  : "No products available yet.";
-
- Object.keys(cart).forEach(function(id){
-  const p=products.find(function(item){return item.id===id;});
-  if(!p){delete cart[id];return;}
-  cart[id].name=p.name;
-  cart[id].price=Number(p.price)||0;
- });
-
- renderProducts();
- renderCart();
-
-},function(error){
- message.textContent="Could not load products: "+error.message;
-});
-
-function renderProducts(){
-
- const search=document.getElementById("searchInput").value.toLowerCase();
-
- const filtered=products.filter(function(p){
-  return String(p.name||"").toLowerCase().includes(search);
- });
-
- if(!filtered.length){
-  productGrid.innerHTML='<div class="empty">No matching products found.</div>';
-  return;
- }
-
- productGrid.innerHTML=filtered.map(function(p){
-
-  const price=Number(p.price)||0;
-  const quantity=cart[p.id]?cart[p.id].quantity:0;
-  const image=p.imageUrl||"";
-
-  return `
-   <div class="card">
-    ${image
-     ? `<img class="product-image" src="${escapeHTML(image)}" alt="${escapeHTML(p.name||"Product")}" onerror="this.style.display='none'">`
-     : `<div class="product-image" style="display:grid;place-items:center;font-size:45px">🛍️</div>`
+// =====================================
+// AUTHENTICATION
+// =====================================
+auth.onAuthStateChanged(async user=>{
+  try{
+    if(user){
+      currentUser=user;
+      await loadProducts();
+    }else{
+      await auth.signInAnonymously();
     }
-    <h3>${escapeHTML(p.name||"Product")}</h3>
-    <div class="price">₹${price.toFixed(2)}</div>
-
-    ${quantity>0?`
-     <div class="card-qty">
-      <button data-minus="${escapeHTML(p.id)}">−</button>
-      <span>${quantity}</span>
-      <button data-plus="${escapeHTML(p.id)}">+</button>
-     </div>
-    `:`
-     <button class="primary add-button" data-add="${escapeHTML(p.id)}">Add to Cart</button>
-    `}
-   </div>
-  `;
- }).join("");
-}
-
-function changeQuantity(id,change){
-
- const p=products.find(function(item){return item.id===id;});
- if(!p)return;
-
- const current=cart[id]?cart[id].quantity:0;
- const next=current+change;
-
- if(next<=0){
-  delete cart[id];
- }else{
-  cart[id]={
-   name:p.name,
-   price:Number(p.price)||0,
-   quantity:next
-  };
- }
-
- renderProducts();
- renderCart();
-}
-
-productGrid.addEventListener("click",function(event){
-
- const add=event.target.closest("[data-add]");
- const plus=event.target.closest("[data-plus]");
- const minus=event.target.closest("[data-minus]");
-
- if(add)changeQuantity(add.dataset.add,1);
- if(plus)changeQuantity(plus.dataset.plus,1);
- if(minus)changeQuantity(minus.dataset.minus,-1);
-
+  }catch(error){
+    console.error("Authentication error:",error);
+    showToast("Login failed: "+error.code);
+  }
 });
 
-function renderCart(){
-
- const cartItems=document.getElementById("cartItems");
- const ids=Object.keys(cart);
-
- if(!ids.length){
-  cartItems.innerHTML='<p style="color:var(--muted)">Your cart is empty.</p>';
- }else{
-  cartItems.innerHTML=ids.map(function(id){
-
-   const item=cart[id];
-
-   return `
-    <div class="cart-row">
-     <div>
-      <strong>${escapeHTML(item.name)}</strong>
-      <div style="color:var(--muted);font-size:13px">₹${item.price.toFixed(2)} each</div>
-     </div>
-     <div class="qty">
-      <button data-minus="${escapeHTML(id)}">−</button>
-      <span>${item.quantity}</span>
-      <button data-plus="${escapeHTML(id)}">+</button>
-     </div>
-    </div>
-   `;
-
-  }).join("");
- }
-
- const count=ids.reduce(function(sum,id){return sum+cart[id].quantity;},0);
- const total=ids.reduce(function(sum,id){return sum+cart[id].price*cart[id].quantity;},0);
-
- document.getElementById("cartCount").textContent=count;
- document.getElementById("cartTotal").textContent=total.toFixed(2);
+// =====================================
+// PRODUCTS
+// =====================================
+let unsubscribeCustomerProducts = null;
+function loadProducts(){
+  try{
+    if(unsubscribeCustomerProducts) unsubscribeCustomerProducts();
+    unsubscribeCustomerProducts = db.collection("products").onSnapshot(snapshot=>{
+      products=snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));
+      // Keep cart quantities/prices aligned with the latest catalogue.
+      cart=cart.filter(item=>products.some(p=>p.id===item.id));
+      cart=cart.map(item=>{
+        const latest=findProduct(item.id);
+        return latest ? {...item,name:latest.name,price:getPrice(latest),quantity:Math.min(item.quantity,getStock(latest))} : item;
+      }).filter(item=>item.quantity>0);
+      saveLocal();
+      renderCategories();
+      renderProducts();
+      renderRecommendations();
+      renderWishlist();
+      renderViewed();
+      renderPurchased();
+      renderCart();
+    },error=>{
+      console.error("Products listener error:",error);
+      showToast("Could not sync products: "+(error.code||"check connection"));
+    });
+  }catch(error){
+    console.error("Products error:",error);
+    showToast("Could not load products: "+(error.code||"unknown error"));
+  }
 }
 
-document.getElementById("cartItems").addEventListener("click",function(event){
-
- const plus=event.target.closest("[data-plus]");
- const minus=event.target.closest("[data-minus]");
-
- if(plus)changeQuantity(plus.dataset.plus,1);
- if(minus)changeQuantity(minus.dataset.minus,-1);
-
-});
-
-document.getElementById("searchInput").addEventListener("input",renderProducts);
-
-// Place a new order without deleting earlier orders.
-window.prepareCheckout=async function(){
-
- if(isSubmitting)return;
-
- const name=document.getElementById("customerName").value.trim();
- const phone=document.getElementById("customerPhone").value.trim();
- const address=document.getElementById("customerAddress").value.trim();
- const paymentMethod=document.getElementById("paymentMethod").value;
- const output=document.getElementById("checkoutMessage");
- const button=document.getElementById("placeOrderButton");
-
- const ids=Object.keys(cart);
-
- if(!ids.length){
-  output.textContent="Please add products to your cart first.";
-  return;
- }
-
- if(!name||!phone||!address){
-  output.textContent="Please complete all customer details.";
-  return;
- }
-
- if(!/^[0-9]{10}$/.test(phone)){
-  output.textContent="Please enter a valid 10-digit phone number.";
-  return;
- }
-
- isSubmitting=true;
- button.disabled=true;
- button.textContent="Placing Order...";
- output.textContent="Connecting securely...";
-
- try{
-
-  const user=await authReady;
-
-  if(!user){
-   throw new Error("Customer sign-in is unavailable. Please refresh.");
-  }
-
-  const orderItems=[];
-
-  for(const id of ids){
-
-   const product=products.find(function(p){return p.id===id;});
-
-   if(!product){
-    throw new Error("A product in your cart is no longer available.");
-   }
-
-   const price=Number(product.price);
-   const quantity=cart[id].quantity;
-
-   if(!Number.isFinite(price)||price<0||!Number.isInteger(quantity)||quantity<1){
-    throw new Error("One of your cart items has invalid details.");
-   }
-
-   orderItems.push({
-    productId:id,
-    name:String(product.name||"Product"),
-    price:price,
-    quantity:quantity,
-    subtotal:price*quantity
-   });
-
-  }
-
-  const total=orderItems.reduce(function(sum,item){
-   return sum+item.subtotal;
-  },0);
-
-  const orderData={
-   customerUid:user.uid,
-   customerName:name,
-   phone:phone,
-   address:address,
-   paymentMethod:paymentMethod,
-   items:orderItems,
-   total:Number(total.toFixed(2)),
-   status:"Pending",
-   createdAt:new Date().toISOString()
+function renderCategories(){
+  const cats=["All",...new Set(products.map(getCategory))];
+  const icons={
+    All:"🛍️",Fruits:"🍎",Vegetables:"🥦",Dairy:"🥛",
+    Snacks:"🍿",Beverages:"🥤",Bakery:"🍞",
+    Grocery:"🛒",Personal:"🧴",Household:"🧹"
   };
-
-  output.textContent="Submitting your order...";
-
-  const orderRef=await db.collection("orders").add(orderData);
-
-  saveOrderId(orderRef.id);
-  trackOrder(orderRef.id);
-
-  cart={};
+  document.getElementById("categories").innerHTML=cats.map(c=>`
+    <button class="cat" onclick="selectCategory('${escapeHTML(c).replace(/'/g,"\\'")}')">
+      <span class="emoji">${icons[c]||"🧺"}</span>
+      <small>${escapeHTML(c)}</small>
+    </button>`).join("");
+}
+function selectCategory(c){
+  selectedCategory=c;
   renderProducts();
-  renderCart();
-
-  output.innerHTML=
-   '<strong style="color:var(--mint)">Order placed successfully!</strong><br>'+
-   'Your Order ID: <strong>'+escapeHTML(orderRef.id)+'</strong><br>'+
-   'You can track it in My Orders below.';
-
-  renderOrderHistory();
-
-  document.getElementById("trackingSection").scrollIntoView({
-   behavior:"smooth",
-   block:"center"
-  });
-
- }catch(error){
-
-  console.error("Order submission error:",error);
-  output.textContent="Could not place your order: "+error.message;
-
- }finally{
-
-  isSubmitting=false;
-  button.disabled=false;
-  button.textContent="Place Order";
-
- }
-
-};
-
-})();
-
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./sw.js")
-      .then(function () {
-        console.log("Ishan Mart app is ready");
-      })
-      .catch(function (error) {
-        console.error("Service worker error:", error);
-      });
-  });
+  document.getElementById("productsSection").scrollIntoView({behavior:"smooth"});
 }
+function productCard(p){
+  const stock=getStock(p);
+  const old=getOldPrice(p);
+  const price=getPrice(p);
+  const discount=old>price&&old>0?Math.round((old-price)/old*100):0;
+  const isFav=wishlist.includes(p.id);
+  const image=getImage(p);
+  return `
+  <article class="product">
+    <button class="fav ${isFav?"active":""}" onclick="toggleWishlist('${p.id}')">${isFav?"♥":"♡"}</button>
+    <div onclick="openProduct('${p.id}')">
+      <img class="product-image" src="${escapeHTML(image||'https://placehold.co/400x300/eaf4ef/063f3b?text=Ishan+Mart')}" loading="lazy" alt="${escapeHTML(p.name)}">
+      <h4>${escapeHTML(p.name||"Product")}</h4>
+      <div class="muted">${escapeHTML(getCategory(p))}</div>
+      <div class="price-row">
+        <span class="price">${money(price)}</span>
+        ${old>price?`<span class="old-price">${money(old)}</span><span class="discount">${discount}% off</span>`:""}
+      </div>
+      <div class="stock-label ${stock===0?"out":stock<=SETTINGS.lowStockLimit?"low":""}">
+        ${stock===0?"Out of stock":stock<=SETTINGS.lowStockLimit?`Only ${stock} left`: "In stock"}
+      </div>
+    </div>
+    <button class="add-btn" ${stock===0?"disabled":""} onclick="addToCart('${p.id}')">
+      ${stock===0?"Unavailable":"＋ Add to cart"}
+    </button>
+  </article>`;
+}
+function renderProducts(){
+  const query=(document.getElementById("searchInput")?.value||"").toLowerCase();
+  let list=products.filter(p=>{
+    const match=(p.name||"").toLowerCase().includes(query);
+    const cat=selectedCategory==="All"||getCategory(p)===selectedCategory;
+    const stock=getStock(p);
+    const filter=document.getElementById("stockFilter")?.value||"all";
+    const stockMatch=filter==="all"||(filter==="available"&&stock>0)||(filter==="low"&&stock>0&&stock<=SETTINGS.lowStockLimit);
+    return match&&cat&&stockMatch;
+  });
+  const sort=document.getElementById("sortSelect")?.value||"default";
+  if(sort==="priceLow")list.sort((a,b)=>getPrice(a)-getPrice(b));
+  if(sort==="priceHigh")list.sort((a,b)=>getPrice(b)-getPrice(a));
+  if(sort==="name")list.sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+  if(sort==="newest")list.sort((a,b)=>String(b.createdAt||b.addedAt||"").localeCompare(String(a.createdAt||a.addedAt||"")));
+  document.getElementById("allProducts").innerHTML=list.length?list.map(productCard).join():`<div class="empty">No products found.</div>`;
+  const popular=products.filter(p=>p.popular||p.isPopular||p.featured||p.popularity||p.soldCount||p.sales);
+  document.getElementById("popularProducts").innerHTML=(popular.length?popular:products.slice(0,8)).map(productCard).join("")||`<div class="empty">Products coming soon.</div>`;
+  const recent=[...products].sort((a,b)=>String(b.createdAt||b.addedAt||"").localeCompare(String(a.createdAt||a.addedAt||""))).slice(0,6);
+  document.getElementById("recentProducts").innerHTML=recent.map(productCard).join("")||`<div class="empty">No products yet.</div>`;
+}
+function showAllProducts(){
+  selectedCategory="All";
+  document.getElementById("searchInput").value="";
+  renderProducts();
+  document.getElementById("productsSection").scrollIntoView({behavior:"smooth"});
+}
+
+// =====================================
+// PRODUCT DETAILS, RATINGS AND REVIEWS
+// =====================================
+function openProduct(id){
+  const p=findProduct(id);
+  if(!p)return;
+  activeProductId=id;
+  previousPanel=document.querySelector(".panel.active")?.id.replace("Panel","")||"home";
+  viewed=[id,...viewed.filter(x=>x!==id)].slice(0,12);
+  saveLocal();
+  renderViewed();
+  const old=getOldPrice(p);
+  const reviews=JSON.parse(localStorage.getItem("im_reviews_"+id)||"[]");
+  const average=reviews.length?reviews.reduce((s,r)=>s+r.rating,0)/reviews.length:0;
+  const together=products.filter(x=>x.id!==id&&getCategory(x)===getCategory(p)).slice(0,4);
+  document.getElementById("detailContent").innerHTML=`
+    <img class="detail-image" src="${escapeHTML(getImage(p)||'https://placehold.co/600x450/eaf4ef/063f3b?text=Ishan+Mart')}" alt="${escapeHTML(p.name)}">
+    <div class="row" style="margin-top:12px">
+      <span class="small">${escapeHTML(getCategory(p))}</span>
+      <button class="secondary" onclick="toggleWishlist('${p.id}');openProduct('${p.id}')">${wishlist.includes(id)?"♥ Saved":"♡ Save"}</button>
+    </div>
+    <h2 class="detail-title">${escapeHTML(p.name)}</h2>
+    <div class="price-row"><span class="price" style="font-size:23px">${money(getPrice(p))}</span>${old>getPrice(p)?`<span class="old-price">${money(old)}</span>`:""}</div>
+    <p class="small">${getStock(p)===0?"Currently unavailable":getStock(p)<=SETTINGS.lowStockLimit?`Only ${getStock(p)} left in stock`:"Available in stock"}</p>
+    <p>${escapeHTML(p.description||p.details||"A quality grocery product selected for your everyday needs.")}</p>
+    <button class="primary" style="width:100%" ${getStock(p)===0?"disabled":""} onclick="addToCart('${p.id}')">${getStock(p)===0?"Out of stock":"Add to cart"}</button>
+    <div class="section-head"><h3>Ratings & reviews</h3></div>
+    <div class="card">
+      <div class="stars">${average? "★".repeat(Math.round(average))+"☆".repeat(5-Math.round(average)):"☆☆☆☆☆"}</div>
+      <p class="small">${reviews.length?average.toFixed(1)+" / 5 · "+reviews.length+" local review(s)":"No reviews yet"}</p>
+      <div class="field"><label>Your rating</label><select id="reviewRating"><option value="5">★★★★★ - Excellent</option><option value="4">★★★★ - Good</option><option value="3">★★★ - Average</option><option value="2">★★ - Poor</option><option value="1">★ - Very poor</option></select></div>
+      <div class="field"><label>Your review</label><textarea id="reviewText" placeholder="Share your product feedback"></textarea></div>
+      <button class="secondary" onclick="submitReview('${p.id}')">Submit review on this device</button>
+      ${reviews.map(r=>`<p class="small"><b>${"★".repeat(r.rating)}</b> ${escapeHTML(r.text)} </p>`).join("")}
+    </div>
+    <div class="section-head"><h3>Frequently bought together</h3></div>
+    <div class="products">${together.map(productCard).join("")||`<p class="small">More related products will appear here.</p>`}</div>
+  `;
+  showPanel("detail");
+}
+function submitReview(id){
+  const rating=Number(document.getElementById("reviewRating").value);
+  const textValue=document.getElementById("reviewText").value.trim();
+  if(!textValue){showToast("Please write a review first.");return}
+  const key="im_reviews_"+id;
+  const reviews=JSON.parse(localStorage.getItem(key)||"[]");
+  reviews.unshift({rating,text:textValue,date:new Date().toISOString()});
+  localStorage.setItem(key,JSON.stringify(reviews.slice(0,30)));
+  showToast("Review saved on this device.");
+  openProduct(id);
+}
+function goBack(){showPanel(previousPanel||"home")}
+
+// =====================================
+// WISHLIST
+// =====================================
+function toggleWishlist(id){
+  wishlist.includes(id)?wishlist=wishlist.filter(x=>x!==id):wishlist.push(id);
+  saveLocal();
+  renderWishlist();
+  renderProducts();
+  updateFloatingCart();
+  showToast(wishlist.includes(id)?"Added to favourites":"Removed from favourites");
+}
+function renderWishlist(){
+  const list=wishlist.map(findProduct).filter(Boolean);
+  document.getElementById("wishlistProducts").innerHTML=list.length?list.map(productCard).join():`<div class="empty"><b>♡</b>Your favourites will appear here.</div>`;
+}
+
+// =====================================
+// CART AND SAVE FOR LATER
+// =====================================
+function addToCart(id){
+  const p=findProduct(id);
+  if(!p)return;
+  if(getStock(p)<=0){showToast("This product is out of stock.");return}
+  const item=cart.find(x=>x.id===id);
+  if(item){
+    if(item.quantity>=getStock(p)){showToast("Stock limit reached.");return}
+    item.quantity++;
+  }else{
+    cart.push({id,name:p.name,price:getPrice(p),quantity:1});
+  }
+  saveLocal();
+  updateFloatingCart();
+  showToast("Added to cart.");
+}
+function changeQty(id,delta){
+  const item=cart.find(x=>x.id===id);
+  const p=findProduct(id);
+  if(!item)return;
+  item.quantity+=delta;
+  if(item.quantity<=0)cart=cart.filter(x=>x.id!==id);
+  else if(p&&item.quantity>getStock(p)){item.quantity=getStock(p);showToast("Stock limit reached.");}
+  saveLocal();
+  renderCart();
+  updateFloatingCart();
+}
+function saveCartItem(id){
+  const item=cart.find(x=>x.id===id);
+  if(!item)return;
+  savedForLater.push(item);
+  cart=cart.filter(x=>x.id!==id);
+  saveLocal();
+  renderCart();
+  showToast("Saved for later.");
+}
+function restoreSaved(id){
+  const item=savedForLater.find(x=>x.id===id);
+  if(!item)return;
+  const p=findProduct(id);
+  if(!p||getStock(p)<=0){showToast("This item is unavailable.");return}
+  const existing=cart.find(x=>x.id===id);
+  if(existing)existing.quantity+=item.quantity;
+  else cart.push(item);
+  savedForLater=savedForLater.filter(x=>x.id!==id);
+  saveLocal();
+  renderCart();
+  updateFloatingCart();
+}
+function renderCart(){
+  const el=document.getElementById("cartContent");
+  if(!cart.length){
+    el.innerHTML=`<div class="empty"><b>🛒</b>Your cart is empty.</div>`;
+  }else{
+    el.innerHTML=cart.map(item=>`
+      <div class="card">
+        <div class="row">
+          <div><b>${escapeHTML(item.name)}</b><div class="small">${money(item.price)} each</div></div>
+          <b>${money(item.price*item.quantity)}</b>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <button class="secondary" onclick="changeQty('${item.id}',-1)">−</button>
+            <b style="padding:0 10px">${item.quantity}</b>
+            <button class="secondary" onclick="changeQty('${item.id}',1)">+</button>
+          </div>
+          <div>
+            <button class="secondary" onclick="saveCartItem('${item.id}')">Save</button>
+            <button class="danger" onclick="changeQty('${item.id}',-${item.quantity})">Remove</button>
+          </div>
+        </div>
+      </div>`).join("");
+    const sub=cartSubtotal();
+    el.innerHTML+=`
+      <div class="card">
+        <div class="total-line"><span>Subtotal</span><b>${money(sub)}</b></div>
+        <div class="total-line"><span>Delivery</span><b>${getDelivery(sub)===0?"FREE":money(getDelivery(sub))}</b></div>
+        <div class="total-line final"><span>Total</span><span>${money(sub+getDelivery(sub))}</span></div>
+        <p class="small">${sub<SETTINGS.freeDeliveryAbove?`Add ${money(SETTINGS.freeDeliveryAbove-sub)} more for free delivery.`:"You unlocked free delivery!"}</p>
+        <button class="primary" style="width:100%" onclick="startCheckout()">Continue to checkout</button>
+      </div>`;
+  }
+  if(savedForLater.length){
+    el.innerHTML+=`<div class="section-head"><h3>Saved for later</h3></div>`+
+      savedForLater.map(x=>`<div class="card row"><div><b>${escapeHTML(x.name)}</b><div class="small">${money(x.price)}</div></div><button class="secondary" onclick="restoreSaved('${x.id}')">Move to cart</button></div>`).join("");
+  }
+  if(cart.length){
+    const suggestions=products.filter(p=>!cart.some(x=>x.id===p.id)&&getStock(p)>0).slice(0,4);
+    el.innerHTML+=`<div class="section-head"><h3>You may also like</h3></div><div class="products">${suggestions.map(productCard).join("")}</div>`;
+  }
+  updateFloatingCart();
+}
+
+// =====================================
+// CHECKOUT, DELIVERY, COUPONS
+// =====================================
+function startCheckout(){
+  if(!cart.length){showToast("Your cart is empty.");return}
+  const sub=cartSubtotal();
+  if(sub<SETTINGS.minimumOrder){showToast("Minimum order is "+money(SETTINGS.minimumOrder));return}
+  document.getElementById("checkoutName").value=profile.name||"";
+  document.getElementById("checkoutPhone").value=profile.phone||"";
+  document.getElementById("checkoutAddress").value=addresses[0]?.address||"";
+  appliedCoupon=null;
+  document.getElementById("couponInput").value="";
+  document.getElementById("couponMessage").textContent="";
+  updateCheckoutSummary();
+  showPanel("checkout");
+}
+function applyCoupon(){
+  const code=document.getElementById("couponInput").value.trim().toUpperCase();
+  if(code===SETTINGS.couponCode){
+    appliedCoupon=code;
+    document.getElementById("couponMessage").textContent="Coupon applied successfully!";
+  }else{
+    appliedCoupon=null;
+    document.getElementById("couponMessage").textContent="Invalid coupon code.";
+  }
+  updateCheckoutSummary();
+}
+function updateCheckoutSummary(){
+  const sub=cartSubtotal();
+  const delivery=getDelivery(sub);
+  const discount=couponDiscount(sub);
+  const total=Math.max(0,sub+delivery-discount);
+  document.getElementById("checkoutSummary").innerHTML=`
+    <div class="total-line"><span>Items subtotal</span><b>${money(sub)}</b></div>
+    <div class="total-line"><span>Delivery charge</span><b>${delivery?money(delivery):"FREE"}</b></div>
+    <div class="total-line"><span>Coupon discount</span><b style="color:#16805e">−${money(discount)}</b></div>
+    <div class="total-line final"><span>Payable total</span><span>${money(total)}</span></div>
+    <p class="small">${sub<SETTINGS.freeDeliveryAbove?`Add ${money(SETTINGS.freeDeliveryAbove-sub)} to unlock free delivery.`:"Free delivery unlocked."}</p>`;
+}
+
+// =====================================
+// PLACE ORDER - ADMIN COMPATIBLE FIELDS
+// =====================================
+async function placeOrder(){
+  if(!currentUser){showToast("Please wait for login.");return}
+  if(!cart.length){showToast("Your cart is empty.");return}
+  const name=document.getElementById("checkoutName").value.trim();
+  const phone=document.getElementById("checkoutPhone").value.trim();
+  const address=document.getElementById("checkoutAddress").value.trim();
+  const instructions=document.getElementById("deliveryInstructions").value.trim();
+  const paymentMethod=document.getElementById("paymentMethod").value;
+  const subtotal=cartSubtotal();
+
+  if(subtotal<SETTINGS.minimumOrder){showToast("Minimum order is "+money(SETTINGS.minimumOrder));return}
+  if(!name||!phone||!address){showToast("Please complete your delivery details.");return}
+  if(!/^[0-9]{10}$/.test(phone)){showToast("Enter a valid 10-digit phone number.");return}
+
+  for(const item of cart){
+    const p=findProduct(item.id);
+    if(!p||getStock(p)<item.quantity){
+      showToast("Stock changed for "+item.name+". Please update your cart.");
+      return;
+    }
+  }
+
+  const total=Math.max(0,subtotal+getDelivery(subtotal)-couponDiscount(subtotal));
+  const btn=document.getElementById("placeOrderBtn");
+  btn.disabled=true;
+  btn.textContent="Placing order...";
+
+  try{
+    const order={
+      customerUid:currentUser.uid,
+      customerName:name,
+      phone:phone,
+      address:address,
+      paymentMethod:paymentMethod,
+      items:cart.map(x=>({
+        productId:x.id,
+        name:x.name,
+        price:x.price,
+        quantity:x.quantity
+      })),
+      total:total,
+      status:"Pending",
+      createdAt:new Date().toISOString(),
+
+      // Additional compatible order information
+      subtotal:subtotal,
+      deliveryCharge:getDelivery(subtotal),
+      discount:couponDiscount(subtotal),
+      couponCode:appliedCoupon||"",
+      deliveryInstructions:instructions,
+      estimatedDelivery:SETTINGS.estimatedDelivery
+    };
+
+    const doc=await db.collection("orders").add(order);
+    recentOrderIds=[doc.id,...recentOrderIds.filter(x=>x!==doc.id)].slice(0,20);
+    localStorage.setItem("im_order_ids",JSON.stringify(recentOrderIds));
+
+    profile={...profile,name,phone};
+    localStorage.setItem("im_profile",JSON.stringify(profile));
+
+    cart=[];
+    appliedCoupon=null;
+    saveLocal();
+    updateFloatingCart();
+    document.getElementById("confirmationId").textContent="Order ID: "+doc.id;
+    showPanel("confirmation");
+    showToast("Your order has been placed!");
+  }catch(error){
+    console.error("Order error:",error);
+    showToast("Order failed: "+error.code);
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Place order";
+  }
+}
+
+// =====================================
+// ORDER HISTORY AND STATUS TIMELINE
+// =====================================
+async function loadOrders(){
+  const el=document.getElementById("ordersContent");
+  if(!currentUser){el.innerHTML=`<div class="empty">Please wait for login.</div>`;return}
+  el.innerHTML=`<div class="empty">Loading your orders...</div>`;
+  try{
+    const snap=await db.collection("orders").where("customerUid","==",currentUser.uid).get();
+    const docs=snap.docs.map(doc=>({id:doc.id,...doc.data()}));
+    docs.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+    recentOrderIds=docs.map(o=>o.id).slice(0,50);
+    localStorage.setItem("im_order_ids",JSON.stringify(recentOrderIds));
+    el.innerHTML=docs.length?docs.map(orderCard).join():`<div class="empty"><b>▤</b>No orders found for this account on this device.</div>`;
+  }catch(error){
+    console.error("Order history error:",error);
+    el.innerHTML=`<div class="empty">Could not load order history: ${escapeHTML(error.code||"connection error")}</div>`;
+  }
+}
+function orderCard(o){
+  const status=String(o.status||"Pending");
+  const stages=["Pending","Accepted","Preparing","Out for delivery","Delivered"];
+  const completed=status==="Delivered"?5:Math.max(0,stages.indexOf(status)+1);
+  const cancelled=status.toLowerCase().includes("cancel");
+  const timeline=cancelled?
+    `<p class="small">Cancellation status: ${escapeHTML(status)}</p>`:
+    `<div class="timeline">${stages.map((s,i)=>`
+      <div class="step ${i<completed?"done":""}">
+        <div class="dot">${i<completed?"✓":i+1}</div>
+        <div><b>${s}</b><div class="small">${i===0?"Order received":i===4?"Order completed":"Order progress"}</div></div>
+      </div>`).join("")}</div>`;
+  const canRequest=!cancelled&&status.toLowerCase()!=="delivered";
+  return `<div class="card">
+    <div class="row"><b>Order #${escapeHTML(o.id.slice(0,8))}</b><b>${money(o.total)}</b></div>
+    <p class="small">${new Date(o.createdAt||Date.now()).toLocaleString("en-IN")}</p>
+    <p class="small">Status: <b>${escapeHTML(status)}</b></p>
+    ${timeline}
+    <p class="small">Estimated delivery: ${escapeHTML(o.estimatedDelivery||SETTINGS.estimatedDelivery)}</p>
+    ${canRequest?`<button class="danger" onclick="requestCancellation('${o.id}')">Request cancellation</button>`:""}
+  </div>`;
+}
+async function requestCancellation(orderId){
+  const reason=prompt("Enter a short reason for your cancellation request:");
+  if(reason===null)return;
+  if(!reason.trim()){showToast("Please enter a reason.");return}
+  try{
+    await db.collection("cancellationRequests").add({
+      orderId:orderId,
+      customerUid:currentUser.uid,
+      reason:reason.trim(),
+      status:"Requested",
+      createdAt:new Date().toISOString()
+    });
+    showToast("Cancellation request sent.");
+  }catch(error){
+    console.error("Cancellation request error:",error);
+    showToast("Could not send request: "+error.code);
+  }
+}
+
+// =====================================
+// PROFILE AND MULTIPLE ADDRESSES
+// =====================================
+function saveProfile(){
+  profile.name=document.getElementById("profileName").value.trim();
+  profile.phone=document.getElementById("profilePhone").value.trim();
+  saveLocal();
+  showToast("Profile saved on this device.");
+}
+function renderProfile(){
+  document.getElementById("profileName").value=profile.name||"";
+  document.getElementById("profilePhone").value=profile.phone||"";
+  document.getElementById("addressesList").innerHTML=addresses.length?
+    addresses.map((a,i)=>`
+      <div class="card">
+        <b>${escapeHTML(a.label)}</b><p class="small">${escapeHTML(a.address)}</p>
+        <div class="row">
+          <button class="secondary" onclick="useAddress(${i})">Use at checkout</button>
+          <button class="danger" onclick="deleteAddress(${i})">Delete</button>
+        </div>
+      </div>`).join(""):`<p class="small">No saved addresses yet.</p>`;
+}
+function addAddress(){
+  const label=prompt("Address label (Home, Work, etc.):");
+  if(!label)return;
+  const address=prompt("Enter the full delivery address:");
+  if(!address)return;
+  addresses.push({label:label.trim(),address:address.trim()});
+  saveLocal();
+  renderProfile();
+  showToast("Address saved.");
+}
+function useAddress(i){
+  profile.selectedAddress=i;
+  saveLocal();
+  showToast("Address selected. It will be available at checkout.");
+}
+function deleteAddress(i){
+  addresses.splice(i,1);
+  saveLocal();
+  renderProfile();
+}
+
+// =====================================
+// PERSONAL RECOMMENDATIONS
+// =====================================
+function renderRecommendations(){
+  const preferred=products.filter(p=>viewed.some(id=>{
+    const old=findProduct(id);
+    return old&&getCategory(old)===getCategory(p);
+  }));
+  const list=preferred.length?preferred:products.filter(p=>p.popular||p.featured||p.isPopular);
+  document.getElementById("recommendedProducts").innerHTML=(list.filter(p=>!viewed.includes(p.id)).slice(0,6).map(productCard).join())||products.slice(0,4).map(productCard).join();
+}
+function renderViewed(){
+  const list=viewed.map(findProduct).filter(Boolean);
+  document.getElementById("viewedProducts").innerHTML=list.length?list.map(productCard).join():`<p class="small">Products you view will appear here.</p>`;
+}
+function renderPurchased(){
+  const el=document.getElementById("purchasedProducts");
+  el.innerHTML=`<p class="small">Your recent purchases will appear here when order history is available.</p>`;
+  if(!currentUser)return;
+  db.collection("orders").where("customerUid","==",currentUser.uid).get().then(snap=>{
+    const names=[];
+    snap.forEach(doc=>(doc.data().items||[]).forEach(x=>names.push(x.name)));
+    const unique=[...new Set(names)].slice(0,8);
+    el.innerHTML=unique.length?unique.map(n=>`<span class="small">${escapeHTML(n)} · </span>`).join(""):`<p class="small">No purchases yet.</p>`;
+  }).catch(e=>console.warn("Purchase history:",e.code));
+}
+
+// =====================================
+// SUPPORT
+// =====================================
+function contactSupport(){
+  const email="support@ishanmart.example";
+  window.location.href="mailto:"+email+"?subject=Ishan%20Mart%20Customer%20Support";
+}
+
+// =====================================
+// NAVIGATION
+// =====================================
+function showPanel(name){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  const target=document.getElementById(name+"Panel");
+  if(target)target.classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(b=>{
+    b.classList.toggle("active",b.dataset.panel===name);
+  });
+  if(name==="cart")renderCart();
+  if(name==="wishlist")renderWishlist();
+  if(name==="orders")loadOrders();
+  if(name==="profile"){renderProfile();renderViewed();renderPurchased();}
+  if(name==="home")renderProducts();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// =====================================
+// STARTUP
+// =====================================
+updateFloatingCart();
+setTimeout(()=>{
+  const splash=document.getElementById("splash");
+  splash.style.opacity="0";
+  setTimeout(()=>splash.remove(),550);
+},1300);
 </script>
-
-</body>
-</html>
-
-
 </body>
 </html>
